@@ -1,0 +1,94 @@
+
+# Step 1: Calculate energy charge using slab rates
+def calculateEnergyCharge(a):
+    if a <= 100:
+        return a * 3
+    elif a <= 200:
+        return (100 * 3) + ((a - 100) * 5)
+    else:
+        return (100 * 3) + (100 * 5) + ((a - 200) * 8)
+
+
+# Step 2: Calculate fuel adjustment (8% if enabled)
+def calculateFuelCharge(energy, b):
+    if b == 1:
+        return energy * 8 / 100
+    return 0
+
+
+# Step 3: Return fixed monthly charge
+def calculateFixedCharge(c):
+    return c
+
+
+# Step 4: Calculate tax at 5%
+def calculateTax(energy, fuel, fixed):
+    subtotal = energy + fuel + fixed
+    return subtotal * 5 / 100
+
+
+# Step 5: Calculate subsidy without a negative bill
+def calculateSubsidy(total, d):
+    return min(total, d)
+
+
+# Step 6: Calculate late fee
+def calculateLateFee(total, e):
+    if total > 0:
+        return e
+    return 0
+
+
+# Step 7: Calculate final bill
+def calculateFinalBill(a, b, c, d, e):
+    energy = calculateEnergyCharge(a)
+    fuel = calculateFuelCharge(energy, b)
+    fixed = calculateFixedCharge(c)
+
+    subtotal = energy + fuel + fixed
+    tax = calculateTax(energy, fuel, fixed)
+    total = subtotal + tax
+
+    subsidy = calculateSubsidy(total, d)
+    amount_after_subsidy = total - subsidy
+    late_fee = calculateLateFee(total, e)
+
+    # Extra challenge: 2% penalty if pre-subsidy
+    # bill exceeds 2000
+    penalty = 0
+    if total > 2000:
+        penalty = total * 2 / 100
+
+    return max(0, amount_after_subsidy + late_fee + penalty)
+
+
+# Direct arguments: no input() used
+a = 250   # Units consumed
+b = 1     # 1 = fuel adjustment enabled
+c = 150   # Fixed charge
+d = 100   # Subsidy
+e = 75    # Late fee
+
+energy = calculateEnergyCharge(a)
+fuel = calculateFuelCharge(energy, b)
+fixed = calculateFixedCharge(c)
+subtotal = energy + fuel + fixed
+tax = calculateTax(energy, fuel, fixed)
+total = subtotal + tax
+subsidy = calculateSubsidy(total, d)
+late_fee = calculateLateFee(total, e)
+
+penalty = total * 2 / 100 if total > 2000 else 0
+
+final_bill = calculateFinalBill(a, b, c, d, e)
+
+print(f"Energy Charge = {energy:.2f}")
+print(f"Fuel Adjustment = {fuel:.2f}")
+print(f"Fixed Charge = {fixed:.2f}")
+print(f"Subtotal = {subtotal:.2f}")
+print(f"Tax = {tax:.2f}")
+print(f"Total Before Subsidy = {total:.2f}")
+print(f"Subsidy = {subsidy:.2f}")
+print(f"Late Fee = {late_fee:.2f}")
+print(f"Penalty = {penalty:.2f}")
+print(f"Final Payable Amount = {final_bill:.2f}")
